@@ -31,6 +31,9 @@ class SilentCipherWatermarker:
 
     @staticmethod
     def _load_backend(*, device: str, model_type: str):
+        # Force CPU for SilentCipher to avoid MIOpen BatchNorm JIT compilation errors on Windows ROCm.
+        device = "cpu"
+
         try:
             import silentcipher
         except ImportError:
