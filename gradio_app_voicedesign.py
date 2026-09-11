@@ -15,6 +15,7 @@ from irodori_tts.inference_runtime import (
     SamplingRequest,
     clear_cached_runtime,
     default_runtime_device,
+    default_codec_device,
     download_hf_checkpoint,
     get_cached_runtime,
     list_available_runtime_devices,
@@ -55,7 +56,7 @@ def _default_model_device() -> str:
 
 
 def _default_codec_device() -> str:
-    return default_runtime_device()
+    return default_codec_device()
 
 
 def _precision_choices_for_device(device: str) -> list[str]:

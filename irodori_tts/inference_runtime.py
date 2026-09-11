@@ -92,6 +92,13 @@ def list_available_runtime_devices() -> list[str]:
 def default_runtime_device() -> str:
     return list_available_runtime_devices()[0]
 
+def default_codec_device() -> str:
+    # If running on Windows with ROCm, fallback to CPU to avoid MIOpen bugs.
+    # Otherwise, use the standard runtime device (e.g. CUDA on NVIDIA).
+    import sys
+    if sys.platform == "win32" and getattr(torch.version, "hip", None) is not None:
+        return "cpu"
+    return default_runtime_device()
 
 def list_available_runtime_precisions(device: str | torch.device) -> list[str]:
     resolved = resolve_runtime_device(device)
@@ -189,6 +196,7 @@ class RuntimeKey:
     model_device: str
     codec_repo: str = "Aratako/Semantic-DACVAE-Japanese-32dim"
     model_precision: str = "fp32"
+    # Default codec_device to CPU on Windows ROCm to avoid MIOpen ConvTranspose1d JIT crashes (TDR) and latency
     codec_device: str = "cpu"
     codec_precision: str = "fp32"
     codec_deterministic_encode: bool = True

@@ -88,6 +88,9 @@ You can easily launch by double-clicking the included `.bat` files, or running v
    Injected a dummy `torch.distributed.ReduceOp` to avoid `AttributeError` on Windows PyTorch builds that lack distributed training modules.
 4. **`irodori_tts/watermark.py` (CPU Fallback for SilentCipher):**  
    Forced `SilentCipherWatermarker` backend to initialize on `cpu`. This completely bypasses MIOpen's BatchNorm JIT compilation error (`hiprtcCompileProgram: 'type_traits' file not found`) while preserving 100% of the inaudible watermark functionality without noticeable latency (~0.05s).
+5. **Default Codec Device Set to CPU (`codec_device="cpu"`):**  
+   - **Why:** On Windows ROCm (`gfx1032`), MIOpen lacks optimized Composable Kernel (CK) libraries for `ConvTranspose1d` used in DACVAE decoding. Executing the codec on GPU triggers continuous fallback searches (`GemmFwdRest`) and massive workspace memory allocations (400MB+), resulting in extreme latency (~300s+) and Windows TDR (driver timeout / `HIP error: unspecified launch failure`).  
+   - **Fix:** Separated the codec device from the main model device and set its default to `cpu`. While the main diffusion model runs on the GPU (~4–7s), DACVAE decoding runs safely on the CPU in just ~2–3s without triggering MIOpen bugs. This completely eliminates driver crashes and reduces total generation time from ~6 minutes to ~7–10 seconds.
 
 ---
 
