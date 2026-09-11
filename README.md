@@ -42,6 +42,13 @@ This fork is **specifically tailored for native Windows**.
 ---
 
 ## Quick Start
+### 📋 Prerequisites
+
+Before getting started, make sure you have the following installed on your Windows system:
+- **`git`**
+- **`uv`** (Fast Python package manager)
+
+*(Installation of `git` and `uv` is outside the scope of this project).*
 
 ### 1. Clone & Sync
 
@@ -81,6 +88,10 @@ You can easily launch by double-clicking the included `.bat` files, or running v
    Injected a dummy `torch.distributed.ReduceOp` to avoid `AttributeError` on Windows PyTorch builds that lack distributed training modules.
 4. **`irodori_tts/watermark.py` (CPU Fallback for SilentCipher):**  
    Forced `SilentCipherWatermarker` backend to initialize on `cpu`. This completely bypasses MIOpen's BatchNorm JIT compilation error (`hiprtcCompileProgram: 'type_traits' file not found`) while preserving 100% of the inaudible watermark functionality without noticeable latency (~0.05s).
+
+---
+
+⭐ **If you find this project useful, please consider giving it a star! It helps others discover ROCm support on Windows.**
 
 ---
 
