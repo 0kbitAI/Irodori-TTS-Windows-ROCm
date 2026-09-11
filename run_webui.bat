@@ -6,6 +6,18 @@ echo =======================================================
 echo Starting Irodori-TTS WebUI...
 echo =======================================================
 
+:: -------------------------------------------------------
+:: AMD ROCm Optimization & Multi-GPU Settings
+:: -------------------------------------------------------
+:: If you have a Ryzen APU (integrated GPU) and it fails to detect RX 6600 XT,
+:: remove the '@REM' from the line below (try 0 or 1):
+@REM set HIP_VISIBLE_DEVICES=0
+
+:: Optimize MIOpen kernel search and suppress verbose warnings
+set MIOPEN_FIND_MODE=FAST
+set MIOPEN_LOG_LEVEL=3
+:: -------------------------------------------------------
+
 echo Checking active environment...
 uv pip list | findstr "gfx103x" >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
