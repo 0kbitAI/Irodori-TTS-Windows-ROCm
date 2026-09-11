@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import irodori_tts._compat  # noqa: F401 - Apply Windows ROCm compatibility patch
-
 import argparse
 from datetime import datetime
 from pathlib import Path
