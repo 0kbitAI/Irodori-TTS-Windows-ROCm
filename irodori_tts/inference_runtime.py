@@ -36,6 +36,7 @@ from .speaker_inversion import (
     speaker_inversion_batch_tensors,
 )
 from .text_normalization import normalize_text
+from .token_split import SPLIT_TOKENIZER_REPO
 from .tokenizer import PretrainedTextTokenizer
 from .watermark import SilentCipherWatermarker
 
@@ -197,6 +198,8 @@ class RuntimeKey:
     codec_deterministic_decode: bool = True
     compile_model: bool = False
     compile_dynamic: bool = False
+    # Avoid rare long tokens of the v4 Small text tokenizer (see token_split.py).
+    split_rare_tokens: bool = True
 
 
 @dataclass
@@ -766,6 +769,9 @@ class InferenceRuntime:
                 f"text_vocab_size mismatch: checkpoint text_vocab_size={model_cfg.text_vocab_size} but tokenizer "
                 f"({model_cfg.text_tokenizer_repo}) vocab_size={tokenizer.vocab_size}."
             )
+        # The split threshold is on this tokenizer's score scale; leave other models unchanged.
+        if key.split_rare_tokens and model_cfg.text_tokenizer_repo == SPLIT_TOKENIZER_REPO:
+            tokenizer.enable_rare_token_split()
         caption_tokenizer = None
         if model_cfg.use_caption_condition:
             caption_tokenizer_source, caption_tokenizer_is_local = _resolve_tokenizer_source(
